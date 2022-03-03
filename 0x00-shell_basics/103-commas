@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -a --file-type | grep -v / | tr '\n' ','
+ls -am
