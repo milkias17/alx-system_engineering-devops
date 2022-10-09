@@ -1,0 +1,19 @@
+As developers we all work with the web at different layers of the stack, but we rarely ever think about what actually happens when a user types in a URL in their browser and presses enter. There is so much that is abstracted away during web development, which is great, but I was interested in what goes on behind the scenes. So today, I'll be sharing with you a very simplified process of how a request cycle may works.
+
+The first thing that happens after a user types in a *URL* and presses enter, is the browser tries to translate the *URL* into an *IP* address. The thing is, web servers communicate using IP addresses instead of strings, so instead of "google.com", the browser and server communicate with an IP address like "192.168.8.108".
+
+## But how does the browser translate URLS to IP addresses
+
+It first asks the OS if it knows the current host, this is what happens when you type in localhost:3000 for your react project for example. The browser asks the OS if it knows the host "localhost" which the OS replies with the URL, 127.0.0.1. You can add more hosts on your machine by editing /etc/hosts file. But if the OS and the browser cache don't contain the the IP address for that URL, the browser asks the resolver(usually your ISP) for that DNS entry and then translates the URL into an IP address.
+
+## What happens after you found the IP address for the server?
+
+Well, now the browser sends an HTTP GET request to the previously found IP address. Then since google has enormous amount of traffic, they obviously don't just have a single server, they have a huge amount servers all around the world. So when we send a GET request to the IP address we get, the load balancer finds a server with the least amount of load through its algorithm to send the request to a server.
+
+## Well the server received the request, now what?
+
+Well once the server receives a request, the web server(the application that runs on a physical server and accepts the request) is normally configured to do a specific action when a request is sent to a route. In our scenario, the web server might just return an index html page where we normally type our search query. But in another case, the web server might query the database and send us that data or a million other things you might think of as a developer.
+
+## Conclusion
+
+Well, that was my very simplified explanation of how a web request works. Hopefully you didn't find my explanation to be incredibly stupid:) Have a good one!
