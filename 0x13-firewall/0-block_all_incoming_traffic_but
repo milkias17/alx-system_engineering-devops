@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# installs and configures firewall
+
+apt update -y
+apt install ufw -y
+ufw allow 22/tcp
+ufw allow 443/tcp
+ufw allot 80/tcp
+ufw enable
