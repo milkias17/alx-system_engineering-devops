@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # run nginx running as nginx user and listen on port 8080
-
 pkill apache2
 chmod 644 /etc/nginx/nginx.conf
 sed '/#user/c\user nginx' /etc/nginx/nginx.conf
