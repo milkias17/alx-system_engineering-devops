@@ -1,14 +1,20 @@
 #!/usr/bin/python3
-"""fetches information about an employee's TODO list progress"""
+
+"""
+    This module requests data from a RESTful API
+    (https://jsonplaceholder.typicode.com/)
+    and returns information about an employees tasks
+"""
+
+from requests import get
 from sys import argv
 
-import requests
 
 if __name__ == "__main__":
     employee_id = argv[1]
     url_base = "https://jsonplaceholder.typicode.com"
-    todos = requests.get(f"{url_base}/users/{employee_id}/todos").json()
-    user = requests.get(f"{url_base}/users/{employee_id}").json()
+    todos = get(f"{url_base}/users/{employee_id}/todos").json()
+    user = get(f"{url_base}/users/{employee_id}").json()
 
     completed_todos = []
     num_completed = 0
@@ -20,7 +26,8 @@ if __name__ == "__main__":
 
     print(
         f"Employee {user.get('name')} is done with tasks"
-        f"({num_completed}/{len(todos)}):")
+        f"({num_completed}/{len(todos)}):"
+    )
 
     for todo in completed_todos:
         print(f"\t {todo.get('title')}")
