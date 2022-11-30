@@ -1,35 +1,33 @@
 #!/usr/bin/python3
+"""fetches information from JSONplaceholder API and exports to JSON"""
 
-"""
-    This module requests data from a RESTful API
-    (https://jsonplaceholder.typicode.com/)
-    and returns information about an all employees
-    in JSON format
-"""
-
-import json
-import requests
-
-
-def main():
-    """ fetches the todo list progress for an employee """
-    url_base = "https://jsonplaceholder.typicode.com"
-    users = requests.get(f"{url_base}/users").json()
-    todos = requests.get(f"{url_base}/todos").json()
-    json_dict = {}
-    for user in users:
-        user_todos = []
-        for todo in filter(lambda x: x.get('userId') == user.get("id"), todos):
-            todo_dict = {}
-            todo_dict["username"] = user.get("username")
-            todo_dict["task"] = todo.get("title")
-            todo_dict["completed"] = todo.get("completed")
-            user_todos.append(todo_dict)
-        json_dict[user.get("id")] = user_todos
-
-    with open("todo_all_employees.json", "w") as json_file:
-        json.dump(json_dict, json_file)
-
+from json import dump
+from requests import get
+from sys import argv
 
 if __name__ == "__main__":
-    main()
+    users_url = "https://jsonplaceholder.typicode.com/users"
+    users_result = get(users_url).json()
+
+    big_dict = {}
+    for user in users_result:
+        todo_list = []
+
+        pep_fix = "https://jsonplaceholder.typicode.com"
+        todos_url = pep_fix + "/user/{}/todos".format(user.get("id"))
+        name_url = "https://jsonplaceholder.typicode.com/users/{}".format(
+            user.get("id"))
+
+        todo_result = get(todos_url).json()
+        name_result = get(name_url).json()
+        for todo in todo_result:
+            todo_dict = {}
+            todo_dict.update({"username": name_result.get("username"),
+                              "task": todo.get("title"),
+                              "completed": todo.get("completed")})
+            todo_list.append(todo_dict)
+
+        big_dict.update({user.get("id"): todo_list})
+
+    with open("todo_all_employees.json", 'w') as f:
+        dump(big_dict, f)

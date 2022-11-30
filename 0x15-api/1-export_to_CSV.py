@@ -1,21 +1,26 @@
 #!/usr/bin/python3
-"""Returns information about an employee's TODO list progress"""
-import csv
+"""fetches information from JSONplaceholder API and exports to CSV"""
+
+from csv import DictWriter, QUOTE_ALL
+from requests import get
 from sys import argv
 
-import requests
 
 if __name__ == "__main__":
-    user_id = argv[1]
-    employee_id = argv[1]
-    url_base = "https://jsonplaceholder.typicode.com"
-    todos = requests.get(f"{url_base}/users/{employee_id}/todos").json()
-    user = requests.get(f"{url_base}/users/{employee_id}").json()
+    main_url = "https://jsonplaceholder.typicode.com"
+    todo_url = main_url + "/user/{}/todos".format(argv[1])
+    name_url = main_url + "/users/{}".format(argv[1])
+    todo_result = get(todo_url).json()
+    name_result = get(name_url).json()
 
-    with open(f"{user_id}.csv", "w") as csvfile:
-        csv_writer = csv.writer(csvfile, doublequote=True)
-        for todo in todos:
-            csvfile.write('"{}",'.format(user.get("id")))
-            csvfile.write('"{}",'.format(user.get("username")))
-            csvfile.write('"{}",'.format(todo.get("completed")))
-            csvfile.write('"{}"\n'.format(todo.get("title")))
+    todo_list = []
+    for todo in todo_result:
+        todo_dict = {}
+        todo_dict.update({"user_ID": argv[1], "username": name_result.get(
+            "username"), "completed": todo.get("completed"),
+            "task": todo.get("title")})
+        todo_list.append(todo_dict)
+    with open("{}.csv".format(argv[1]), 'w', newline='') as f:
+        header = ["user_ID", "username", "completed", "task"]
+        writer = DictWriter(f, fieldnames=header, quoting=QUOTE_ALL)
+        writer.writerows(todo_list)
